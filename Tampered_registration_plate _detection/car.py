@@ -1,9 +1,10 @@
-#azure api integration
+#azure Custom vision api integration for getting prediction
+
 import requests
 
 # API endpoint and details
-endpoint = "https://cars7722-prediction.cognitiveservices.azure.com/customvision/v3.0/Prediction/eb8bd9ca-ab07-487f-839a-3d716927b4c8/classify/iterations/Iteration1/image"
-prediction_key = "fd0e18db3f604ecea766c8f4d029f729"
+endpoint = "Custom vision iteration key"
+prediction_key = "Custom vision prediction key"
 
 # Set headers
 headers = {
@@ -16,7 +17,7 @@ data={
 }
 
 # Replace with the path to the image file you want to analyze
-image_path = r"C:\Users\velpo\OneDrive\Desktop\xl6\7xhrg3a_1573869.jpg"
+image_path = r"/image5.jpg"
 
 # Read the image file as bytes
 image_data = open(image_path, "rb").read()
