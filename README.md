@@ -4,13 +4,13 @@ This repository contains Python code for detecting tampered vehicle number plate
 
 ## Setup
 
-1. **Python Installation:** Make sure you have Python installed on your system.
+- 1. **Python Installation:** Make sure you have Python installed on your system.
 
-2. **Dependency Installation:** Install the required dependencies using the following command:
+- 2. **Dependency Installation:** Install the required dependencies using the following command:
    ```bash
    pip install opencv-python matplotlib numpy imutils easyocr requests
 
-Custom Vision Account: Create an account and set up a project on the Custom Vision service. Obtain the necessary API key and endpoint.
+- 3. **Custom Vision Account:** Create an account and set up a project on the Custom Vision service. Obtain the necessary API key and endpoint.
 
-Configuration Update: Replace the placeholder values in the Jupyter Notebook (tampered_number_plate_detection.ipynb) with your actual API key and endpoint.
+- 4. **Configuration Update:** Replace the placeholder values in the Jupyter Notebook (tampered_number_plate_detection.ipynb) with your actual API key and endpoint.
 
