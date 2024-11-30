@@ -3,116 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vehicle Number Plate Validation</title>
+    <title>Vehicle Number Plate Validator</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f9;
         }
         .container {
-            max-width: 800px;
+            max-width: 600px;
             margin: 50px auto;
             padding: 20px;
-            background: #ffffff;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         h1 {
             text-align: center;
             color: #333;
         }
-        .form-group {
-            margin-bottom: 20px;
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
         label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
-        input, button {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
             font-size: 16px;
+            color: #333;
+        }
+        input[type="text"], input[type="file"] {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
         button {
-            background-color: #28a745;
+            background-color: #4CAF50;
             color: white;
             border: none;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
             cursor: pointer;
         }
         button:hover {
-            background-color: #218838;
+            background-color: #45a049;
         }
-        .result {
+        .response {
             margin-top: 20px;
             padding: 15px;
-            background-color: #f0f8ff;
-            border: 1px solid #d1e7fd;
             border-radius: 5px;
+            background: #e7f3fe;
+            color: #31708f;
+            border: 1px solid #bce8f1;
         }
         .error {
-            background-color: #fdecea;
-            color: #a71d2a;
-            border: 1px solid #f5c2c7;
+            background: #f2dede;
+            color: #a94442;
+            border: 1px solid #ebccd1;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Vehicle Number Plate Validation</h1>
+        <h1>Vehicle Number Plate Validator</h1>
         <form id="validateForm">
-            <div class="form-group">
-                <label for="image">Upload Image:</label>
-                <input type="file" id="image" name="image" accept="image/*">
-            </div>
-            <div class="form-group">
-                <label for="model">Vehicle Model:</label>
-                <input type="text" id="model" name="model" placeholder="Enter Vehicle Model">
-            </div>
-            <button type="submit">Validate Number Plate</button>
+            <label for="file">Upload Number Plate Image:</label>
+            <input type="file" id="file" name="file" accept="image/*" required>
+
+            <label for="model">Enter Vehicle Model:</label>
+            <input type="text" id="model" name="model" placeholder="e.g., Kia Seltos" required>
+
+            <button type="submit">Validate</button>
         </form>
-        <div id="result" class="result" style="display:none;"></div>
+
+        <div id="response" class="response" style="display: none;"></div>
     </div>
 
     <script>
-        const form = document.getElementById('validateForm');
-        const resultDiv = document.getElementById('result');
-
-        form.addEventListener('submit', async (e) => {
+        document.getElementById('validateForm').addEventListener('submit', async function (e) {
             e.preventDefault();
 
-            const image = document.getElementById('image').files[0];
-            const model = document.getElementById('model').value;
-
-            if (!image || !model) {
-                resultDiv.style.display = 'block';
-                resultDiv.className = 'result error';
-                resultDiv.innerText = "Both image and model are required!";
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('file', image);
-            formData.append('model', model);
+            const form = e.target;
+            const formData = new FormData(form);
 
             try {
-                const response = await fetch('http://127.0.0.1:8000/validate/', {
+                const response = await fetch('/validate/', {
                     method: 'POST',
                     body: formData,
                 });
-                const data = await response.json();
 
-                resultDiv.style.display = 'block';
-                resultDiv.className = 'result';
-                resultDiv.innerText = `Result: ${data.result}\nDetected Number Plate: ${data.number_plate}`;
+                const result = await response.json();
+
+                const responseDiv = document.getElementById('response');
+                responseDiv.style.display = 'block';
+
+                if (response.error) {
+                    responseDiv.className = 'response error';
+                    responseDiv.innerText = response.error;
+                } else {
+                    responseDiv.className = 'response';
+                    responseDiv.innerHTML = `
+                        <strong>Number Plate:</strong> ${result.number_plate}<br>
+                        <strong>Model:</strong> ${result.model}<br>
+                        <strong>Database Validation:</strong> ${result.database_validation}<br>
+                        <strong>Custom Vision Validation:</strong> ${result.custom_vision_validation || 'N/A'}<br>
+                        <strong>Result:</strong> ${result.result || 'Validation Complete'}
+                    `;
+                }
             } catch (error) {
-                resultDiv.style.display = 'block';
-                resultDiv.className = 'result error';
-                resultDiv.innerText = "An error occurred while processing the request.";
+                const responseDiv = document.getElementById('response');
+                responseDiv.style.display = 'block';
+                responseDiv.className = 'response error';
+                responseDiv.innerText = 'An error occurred while validating the number plate.';
+                console.error(error);
             }
         });
     </script>
